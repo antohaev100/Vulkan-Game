@@ -1,5 +1,5 @@
 #include "glfw_fun.h"
-#include "utils.h"
+#include "vulkan_game/utils.h"
 
 static bool showCursor = false;
 static bool fullscreen = false;

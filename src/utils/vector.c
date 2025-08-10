@@ -1,4 +1,4 @@
-#include "shared_buffer.h"
+#include "vulkan_game/shared_buffer.h"
 
 // Generic manager functions for any dynamic array
 void vectorAdd(vec *m, void* newElem) {

@@ -58,7 +58,8 @@ set_target_properties(vulkan_game PROPERTIES
 
 # Add include directories using target-based approach
 target_include_directories(vulkan_game PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/headers
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/external/CThreads
     ${CMAKE_CURRENT_SOURCE_DIR}/external/stb
     ${CMAKE_CURRENT_SOURCE_DIR}/external/timer_lib

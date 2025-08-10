@@ -1,5 +1,5 @@
-#include "std_c.h"
-#include "utils.h"
+#include "vulkan_game/std_c.h"
+#include "vulkan_game/utils.h"
 
 void printMatrix(const char* name, float matrix[4][4]) {
     printf("%s:\n", name);

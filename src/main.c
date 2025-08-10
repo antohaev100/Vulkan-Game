@@ -1,5 +1,5 @@
-#include "vk_fun.h"
-#include "glfw_fun.h"
+#include "vk/vk_fun.h"
+#include "input/glfw_fun.h"
 #include <stdbool.h>
 
 // Function prototypes
