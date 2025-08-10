@@ -1,0 +1,86 @@
+# Build directories
+build/
+bin/
+obj/
+out/
+debug/
+release/
+
+# Compiled object files
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
+
+# Shader compilation outputs
+*.spv
+shaders/compiled/
+
+# IDE files
+.vscode/
+.vs/
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+*.suo
+*.sdf
+*.opensdf
+*.user
+*.userosscache
+*.userprefs
+
+# Visual Studio Code
+*.code-workspace
+
+# CLion
+.idea/
+cmake-build-*/
+
+# OS-specific files
+Thumbs.db
+.DS_Store
+.AppleDouble
+.LSOverride
+*.tmp
+*.temp
+*~
+
+# Windows
+desktop.ini
+ehthumbs.db
+
+# Linux
+*~
+
+# Debug files
+*.pdb
+*.ilk
+
+# Logs
+*.log
+
+# Backup files
+*.bak
+*.backup
+
+# Personal/Local files
+project.txt
+notes.txt
+todo.txt
+*.notes
+*.personal
+.env
+.env.local
