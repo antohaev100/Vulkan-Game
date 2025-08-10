@@ -1,88 +1,126 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.16)
 
-# Set the project name
-project(HelloWorld C)
-
-# Collect all .c files in the src directory
-file(GLOB SOURCES "src/*.c" "src/*/*.c" "includes/*/*.c")
-
-
-# Add the include directories
-include_directories(
-    shaders
-    headers
-    includes/CThreads
-    includes/stb
-    includes/timer_lib
-    includes/tinyobjloader
-    "C:/VulkanSDK/1.3.296.0/Include"
-    "C:/glfw-3.4.bin.WIN64/include"
+# Set the project name and version
+project(VulkanGame 
+    VERSION 1.0.0
+    DESCRIPTION "A game made in C with the Vulkan API"
+    LANGUAGES C
 )
 
+# Set C standard
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
 
-# Add the library directories
-link_directories(
-    "C:/VulkanSDK/1.3.296.0/Lib"
-    "C:/glfw-3.4.bin.WIN64/lib-mingw-w64"
-)
+# Set build type to Debug if not specified
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
+endif()
 
-# Find OpenMP
+# Compiler-specific flags
+if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
+    # Warning flags
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -Wformat-security")
+    
+    # Debug flags
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -O0 -DDEBUG")
+    
+    # Release flags
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -DNDEBUG")
+    
+    # Address sanitizer for debug builds (optional)
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND ENABLE_ASAN)
+        set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fsanitize=address -fno-omit-frame-pointer")
+        set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -fsanitize=address")
+    endif()
+endif()
+
+# Find required packages
+find_package(Vulkan REQUIRED)
+find_package(glfw3 REQUIRED)
+
+# Find OpenMP (commented out as in original)
 #find_package(OpenMP REQUIRED)
 
-# Add the executable
-add_executable(hello_world ${SOURCES})
+# Collect all .c files in the src directory
+file(GLOB_RECURSE SOURCES 
+    "src/*.c" 
+    "external/CThreads/*.c"
+    "external/timer_lib/*.c"
+)
 
-# Link the libraries
-target_link_libraries(hello_world
-    glfw3
-    vulkan-1
+# Create the executable
+add_executable(vulkan_game ${SOURCES})
+
+# Set target properties
+set_target_properties(vulkan_game PROPERTIES
+    OUTPUT_NAME "vulkan_game"
+)
+
+# Add include directories using target-based approach
+target_include_directories(vulkan_game PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/headers
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/CThreads
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/stb
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/timer_lib
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/tinyobjloader
+)
+
+# Link libraries using modern CMake targets
+target_link_libraries(vulkan_game PRIVATE
+    Vulkan::Vulkan
+    glfw
 #    OpenMP::OpenMP_C
 )
 
-# Set the path to glslangValidator
-set(Vulkan_GLSLANG_VALIDATOR_EXECUTABLE "C:/VulkanSDK/1.3.296.0/Bin/glslangValidator.exe")
+# Create build directory for shaders
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/shaders)
 
-# Compile shaders
-add_custom_command(
-    OUTPUT ${CMAKE_SOURCE_DIR}/build/shaders/scene.vert.spv
-    COMMAND ${Vulkan_GLSLANG_VALIDATOR_EXECUTABLE} -V ${CMAKE_SOURCE_DIR}/shaders/scene.vert -o ${CMAKE_SOURCE_DIR}/build/shaders/scene.vert.spv
-    DEPENDS ${CMAKE_SOURCE_DIR}/shaders/scene.vert
-    COMMENT "Compiling vertex shader"
+# Find glslangValidator
+find_program(GLSLANG_VALIDATOR
+    NAMES glslangValidator glslangValidator.exe
+    HINTS 
+        ${Vulkan_GLSLANG_VALIDATOR_EXECUTABLE}
+        $ENV{VULKAN_SDK}/bin
+        $ENV{VULKAN_SDK}/Bin
+    REQUIRED
 )
 
-add_custom_command(
-    OUTPUT ${CMAKE_SOURCE_DIR}/build/shaders/scene.frag.spv
-    COMMAND ${Vulkan_GLSLANG_VALIDATOR_EXECUTABLE} -V ${CMAKE_SOURCE_DIR}/shaders/scene.frag -o ${CMAKE_SOURCE_DIR}/build/shaders/scene.frag.spv
-    DEPENDS ${CMAKE_SOURCE_DIR}/shaders/scene.frag
-    COMMENT "Compiling fragment shader"
-)
+# Function to compile shaders
+function(compile_shader SHADER_SOURCE SHADER_OUTPUT)
+    add_custom_command(
+        OUTPUT ${CMAKE_BINARY_DIR}/shaders/${SHADER_OUTPUT}
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/shaders
+        COMMAND ${GLSLANG_VALIDATOR} -V ${CMAKE_CURRENT_SOURCE_DIR}/shaders/${SHADER_SOURCE} 
+                -o ${CMAKE_BINARY_DIR}/shaders/${SHADER_OUTPUT}
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/shaders/${SHADER_SOURCE}
+        COMMENT "Compiling shader: ${SHADER_SOURCE}"
+        VERBATIM
+    )
+endfunction()
 
-# Compile shadow shaders
-add_custom_command(
-    OUTPUT ${CMAKE_SOURCE_DIR}/build/shaders/shadow.vert.spv
-    COMMAND ${Vulkan_GLSLANG_VALIDATOR_EXECUTABLE} -V ${CMAKE_SOURCE_DIR}/shaders/shadow.vert -o ${CMAKE_SOURCE_DIR}/build/shaders/shadow.vert.spv
-    DEPENDS ${CMAKE_SOURCE_DIR}/shaders/shadow.vert
-    COMMENT "Compiling shadow vertex shader"
-)
+# Compile all shaders
+compile_shader(scene.vert scene.vert.spv)
+compile_shader(scene.frag scene.frag.spv)
+compile_shader(shadow.vert shadow.vert.spv)
+compile_shader(shadow.frag shadow.frag.spv)
 
-add_custom_command(
-    OUTPUT ${CMAKE_SOURCE_DIR}/build/shaders/shadow.frag.spv
-    COMMAND ${Vulkan_GLSLANG_VALIDATOR_EXECUTABLE} -V ${CMAKE_SOURCE_DIR}/shaders/shadow.frag -o ${CMAKE_SOURCE_DIR}/build/shaders/shadow.frag.spv
-    DEPENDS ${CMAKE_SOURCE_DIR}/shaders/shadow.frag
-    COMMENT "Compiling shadow fragment shader"
-)
-
-add_custom_target(
-    Shaders
+# Create shader compilation target
+add_custom_target(compile_shaders ALL
     DEPENDS 
-        ${CMAKE_SOURCE_DIR}/build/shaders/scene.vert.spv 
-        ${CMAKE_SOURCE_DIR}/build/shaders/scene.frag.spv
-        ${CMAKE_SOURCE_DIR}/build/shaders/shadow.vert.spv
-        ${CMAKE_SOURCE_DIR}/build/shaders/shadow.frag.spv
+        ${CMAKE_BINARY_DIR}/shaders/scene.vert.spv 
+        ${CMAKE_BINARY_DIR}/shaders/scene.frag.spv
+        ${CMAKE_BINARY_DIR}/shaders/shadow.vert.spv
+        ${CMAKE_BINARY_DIR}/shaders/shadow.frag.spv
+    COMMENT "Compiling all shaders"
 )
 
-add_dependencies(hello_world Shaders)
+# Make executable depend on shaders
+add_dependencies(vulkan_game compile_shaders)
 
-# Set compiler optimization flags
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
+# Print build information
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "C Compiler: ${CMAKE_C_COMPILER}")
+message(STATUS "Vulkan found: ${Vulkan_FOUND}")
+message(STATUS "Vulkan include: ${Vulkan_INCLUDE_DIRS}")
+message(STATUS "GLFW found: ${glfw3_FOUND}")
+message(STATUS "GLSL Validator: ${GLSLANG_VALIDATOR}")
