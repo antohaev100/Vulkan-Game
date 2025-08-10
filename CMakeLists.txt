@@ -42,6 +42,23 @@ if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
     endif()
 endif()
 
+# MSVC-specific flags
+if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+    # Warning flags for MSVC
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W4")
+    
+    # Treat warnings as errors if enabled
+    if(WARNINGS_AS_ERRORS)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /WX")
+    endif()
+    
+    # Debug flags
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /Zi /Od /DDEBUG")
+    
+    # Release flags
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /O2 /DNDEBUG")
+endif()
+
 # Find required packages
 find_package(Vulkan REQUIRED)
 find_package(glfw3 REQUIRED)
@@ -62,6 +79,26 @@ file(GLOB_RECURSE SOURCES
 
 # Create the executable
 add_executable(vulkan_game ${SOURCES})
+
+# Platform-specific compile definitions
+if(WIN32)
+    target_compile_definitions(vulkan_game PRIVATE VK_USE_PLATFORM_WIN32_KHR)
+elseif(UNIX AND NOT APPLE)
+    target_compile_definitions(vulkan_game PRIVATE VK_USE_PLATFORM_XLIB_KHR)
+elseif(APPLE)
+    target_compile_definitions(vulkan_game PRIVATE VK_USE_PLATFORM_MACOS_MVK)
+endif()
+
+# Add Vulkan validation layers for debug builds
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_definitions(vulkan_game PRIVATE
+        VK_ENABLE_VALIDATION_LAYERS=1
+        DEBUG_BUILD=1
+    )
+    message(STATUS "Debug build: Vulkan validation layers enabled")
+else()
+    message(STATUS "Release build: Vulkan validation layers disabled")
+endif()
 
 # Set strict warnings for your source code only
 target_compile_options(vulkan_game PRIVATE

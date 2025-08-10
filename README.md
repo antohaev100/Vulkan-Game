@@ -44,70 +44,110 @@ All dependencies are either included in the repository or automatically discover
 
 ### Prerequisites
 
-1. **Install Vulkan SDK**
-   ```bash
-   # Download from https://vulkan.lunarg.com/
-   # Set VULKAN_SDK environment variable (usually automatic)
-   ```
+**Required Components:**
+- Vulkan SDK 1.3+ with validation layers
+- GLFW 3.4+
+- CMake 3.16+
+- C compiler with C11 support
 
-2. **Install GLFW**
-   - **Windows**: Download from https://www.glfw.org/download.html
-   - **Linux**: `sudo apt install libglfw3-dev` (Ubuntu/Debian)
-   - **macOS**: `brew install glfw` (Homebrew)
+### Platform-Specific Setup
 
-3. **Install Build Tools**
-   ```bash
-   # Windows (with MSYS2)
-   pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-cmake
-   
-   # Linux
-   sudo apt install build-essential cmake
-   
-   # macOS
-   xcode-select --install
-   brew install cmake
-   ```
+#### Windows (MSYS2/MinGW-w64) - Recommended
+```bash
+# Install MSYS2 from https://www.msys2.org/
+# Open UCRT64 terminal and install dependencies:
+
+pacman -S mingw-w64-ucrt-x86_64-vulkan-devel
+pacman -S mingw-w64-ucrt-x86_64-glfw
+pacman -S mingw-w64-ucrt-x86_64-cmake
+pacman -S mingw-w64-ucrt-x86_64-ninja
+pacman -S mingw-w64-ucrt-x86_64-gcc
+
+# Set environment
+export PATH="/ucrt64/bin:$PATH"
+```
+
+#### Linux (Ubuntu/Debian)
+```bash
+# Install Vulkan SDK
+wget -qO- https://packages.lunarg.com/lunarg-signing-key-pub.asc | sudo tee /etc/apt/trusted.gpg.d/lunarg.asc
+sudo wget -qO /etc/apt/sources.list.d/lunarg-vulkan-jammy.list http://packages.lunarg.com/vulkan/lunarg-vulkan-jammy.list
+sudo apt update
+sudo apt install vulkan-sdk
+
+# Install development tools and libraries
+sudo apt install build-essential cmake ninja-build
+sudo apt install libglfw3-dev
+sudo apt install libvulkan1 mesa-vulkan-drivers vulkan-utils
+
+# Verify installation
+vulkaninfo --summary
+```
+
+#### macOS
+```bash
+# Install Vulkan SDK
+# Download from: https://vulkan.lunarg.com/sdk/home
+# Install the .dmg package
+
+# Install dependencies via Homebrew
+brew install cmake ninja glfw
+
+# Add to shell profile (~/.zshrc or ~/.bash_profile)
+export VULKAN_SDK="$HOME/VulkanSDK/x.x.x.x/macOS"
+export PATH="$VULKAN_SDK/bin:$PATH"
+export DYLD_LIBRARY_PATH="$VULKAN_SDK/lib:$DYLD_LIBRARY_PATH"
+export VK_ICD_FILENAMES="$VULKAN_SDK/share/vulkan/icd.d/MoltenVK_icd.json"
+export VK_LAYER_PATH="$VULKAN_SDK/share/vulkan/explicit_layer.d"
+
+# Reload shell
+source ~/.zshrc  # or ~/.bash_profile
+```
 
 ### Build Instructions
 
-1. **Clone the Repository**
+1. **Clone and Navigate**
    ```bash
    git clone https://github.com/antohaev100/Vulkan-Game.git
    cd Vulkan-Game
    ```
 
-2. **Create Build Directory**
+2. **Configure Build**
    ```bash
-   mkdir build
-   cd build
-   ```
-
-3. **Configure with CMake**
-   ```bash
-   # Debug build (default)
-   cmake .. -DCMAKE_BUILD_TYPE=Debug
+   # Debug build with validation layers (recommended for development)
+   cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
    
-   # Release build (optimized)
-   cmake .. -DCMAKE_BUILD_TYPE=Release
-   ```
-
-4. **Build the Project**
-   ```bash
-   # Build everything (including shaders)
-   cmake --build .
+   # Release build (optimized for performance)
+   cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
    
-   # Or use make on Linux/macOS
-   make -j$(nproc)
+   # Alternative without Ninja (uses system default)
+   cmake -B build -DCMAKE_BUILD_TYPE=Debug
    ```
 
-5. **Run the Game**
+3. **Build the Project**
+   ```bash
+   # Build everything (including automatic shader compilation)
+   cmake --build build
+   
+   # Parallel build (faster)
+   cmake --build build --parallel
+   ```
+
+4. **Run the Game**
    ```bash
    # Windows
-   .\vulkan_game.exe
+   build\vulkan_game.exe
    
    # Linux/macOS
-   ./vulkan_game
+   ./build/vulkan_game
    ```
+
+### Build Configuration Options
+
+- **Debug Mode**: Enables Vulkan validation layers, detailed error checking, and debug symbols
+- **Release Mode**: Optimized performance, minimal validation
+- **Shader Auto-compilation**: All `.vert` and `.frag` shaders automatically compile to `.spv`
+- **Cross-platform**: Same build commands work on Windows, Linux, and macOS
 
 ### Build Targets
 
@@ -151,7 +191,6 @@ Shaders are automatically compiled to SPIR-V during build:
 
 ### Code Style
 - C11 standard
-- 4-space indentation
 - Descriptive variable names
 - Comprehensive error checking for Vulkan calls
 
@@ -159,8 +198,75 @@ Shaders are automatically compiled to SPIR-V during build:
 
 ### Common Issues
 
+#### Build Problems
+
 **"glslangValidator not found"**
 - Ensure Vulkan SDK is installed and `VULKAN_SDK` environment variable is set
+- Windows: Add `%VULKAN_SDK%\Bin` to PATH
+- Linux/macOS: Add `$VULKAN_SDK/bin` to PATH
+
+**"Vulkan library not found"**
+- Verify Vulkan SDK installation
+- Check that `vulkaninfo` command works
+- On Linux: Install mesa-vulkan-drivers
+- On macOS: Ensure MoltenVK is properly configured
+
+**CMake configuration fails**
+```bash
+# Clear cache and reconfigure
+rm -rf build/
+cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
+```
+
+#### Runtime Problems
+
+**"Vulkan device not found" or validation layer errors**
+- Update graphics drivers to latest version
+- For integrated Intel graphics: Install Intel Graphics Driver
+- For NVIDIA: Install latest Game Ready drivers
+- For AMD: Install latest Adrenalin drivers
+
+**Application crashes on startup**
+- Run with validation layers for detailed error information:
+  ```bash
+  # Debug build automatically enables validation layers
+  cmake -B build -DCMAKE_BUILD_TYPE=Debug
+  cmake --build build
+  ./build/vulkan_game
+  ```
+
+#### Platform-Specific Issues
+
+**Windows (MSYS2):**
+- Use UCRT64 environment, not MINGW64
+- Ensure PATH includes `/ucrt64/bin`
+- Install packages with `mingw-w64-ucrt-x86_64-` prefix
+
+**Linux:**
+- Install both development headers and runtime libraries
+- For Wayland: May need additional Wayland support libraries
+- For older distributions: Use AppImage Vulkan SDK
+
+**macOS:**
+- Vulkan runs through MoltenVK translation layer
+- Some Vulkan features may be unsupported
+- Ensure VK_ICD_FILENAMES points to MoltenVK
+
+### Getting Help
+
+1. Check the console output for detailed error messages
+2. Verify your system meets the minimum requirements
+3. Test with validation layers enabled (Debug build)
+4. Check GitHub Issues for similar problems
+5. Run `vulkaninfo` to verify Vulkan installation
+
+### Performance Optimization
+
+**For better performance:**
+- Use Release build configuration
+- Update to latest graphics drivers
+- Close unnecessary background applications
+- On laptops: Use discrete GPU if available
 - Add Vulkan SDK bin directory to your PATH
 
 **"Vulkan not found"**

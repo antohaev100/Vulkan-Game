@@ -5,6 +5,8 @@ obj/
 out/
 debug/
 release/
+build-debug/
+build-release/
 
 # Compiled object files
 *.o
