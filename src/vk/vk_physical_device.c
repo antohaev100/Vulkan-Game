@@ -34,7 +34,7 @@ static void deletePhysicalDevices(VkPhysicalDevice *physicalDevices){
 
 static uint32_t getPhysicalDeviceTotalMemory(const VkPhysicalDeviceMemoryProperties *pPhysicalDeviceMemoryProperties){
 	uint32_t physicalDeviceTotalMemory = 0;
-	for(int i = 0; i < pPhysicalDeviceMemoryProperties->memoryHeapCount; i++){
+	for(int i = 0; i < (int)pPhysicalDeviceMemoryProperties->memoryHeapCount; i++){
 		if((pPhysicalDeviceMemoryProperties->memoryHeaps[i].flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT) != 0){
 			physicalDeviceTotalMemory += pPhysicalDeviceMemoryProperties->memoryHeaps[i].size;
 		}

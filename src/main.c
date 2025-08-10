@@ -4,7 +4,7 @@
 
 // Function prototypes
 static void *rendering_thread(void *arg);
-static void *input_thread(void *arg);
+//static void *input_thread(void *arg);
 static void *physics_thread(void *arg);
 static void *audio_thread(void *arg);
 static void framebufferSizeCallback(GLFWwindow *window, int width, int height);
@@ -33,7 +33,7 @@ int main() {
     initBuffer(pBuffer);
     printf("Buffer initialized\n");
 
-    struct cthreads_thread renderThread, inputThread, physicsThread, audioThread;
+    struct cthreads_thread renderThread, physicsThread, audioThread;
     struct cthreads_args renderArgs = { rendering_thread, pBuffer};
     struct cthreads_args physicsArgs = { physics_thread, pBuffer};
     struct cthreads_args audioArgs = { audio_thread, NULL };
@@ -194,6 +194,8 @@ static void *physics_thread(void *arg) {
 }
 
 static void *audio_thread(void *arg) {
+    //silence unused variable warning
+    (void)arg;
     while (running) {
         //audio();
         barrier_wait();

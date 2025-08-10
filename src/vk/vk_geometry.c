@@ -107,10 +107,10 @@ mapSize initMap(vec *pVertices, vec *pIndices){
     map.vertexNum = sizeof(vertices) / sizeof(vertices[0]);
     initVector(pVertices, sizeof(vertex_t), 1024, 1024);
     initVector(pIndices, sizeof(uint16_t), 4096, 4096);
-    for(int i = 0; i < map.vertexNum; i++){
+    for(uint32_t i = 0; i < map.vertexNum; i++){
         vectorAdd(pVertices, &vertices[i]);
     }
-    for(int i = 0; i < map.indexNum; i++){
+    for(uint32_t i = 0; i < map.indexNum; i++){
         vectorAdd(pIndices, &indices[i]);
     }
     return map;
@@ -249,11 +249,11 @@ void createCuboid(obj3d obj, vec *pVertices, vec *pIndices){
     n+20, n+21, n+22, n+22, n+21, n+23    // Right
     };
 
-    for(int i = 0; i < sizeof(vert) / sizeof(vert[0]); i++){
+    for(uint32_t i = 0; i < sizeof(vert) / sizeof(vert[0]); i++){
         applyRotation(vert[i].pos, vert[i].normal, obj.rotation, obj.pos);
         vectorAdd(pVertices, &vert[i]);
     }
-    for(int i = 0; i < sizeof(indi) / sizeof(indi[0]); i++){
+    for(uint32_t i = 0; i < sizeof(indi) / sizeof(indi[0]); i++){
         vectorAdd(pIndices, &indi[i]);
     }
 }

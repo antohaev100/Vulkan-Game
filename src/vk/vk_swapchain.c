@@ -13,13 +13,12 @@ static VkImage *getSwapchainImages(const VkDevice device, const VkSwapchainKHR s
 	return swapchainImages;
 }
 
-//TODO:
-static void deleteSwapchainImages(const VkDevice device, VkImage *images, const uint32_t imageNumber){
-	for(uint32_t i = 0; i < imageNumber; i++){
-		vkDestroyImage(device, images[i], VK_NULL_HANDLE);
-	}
-	free(images);
-}
+//static void deleteSwapchainImages(const VkDevice device, VkImage *images, const uint32_t imageNumber){
+//	for(uint32_t i = 0; i < imageNumber; i++){
+//		vkDestroyImage(device, images[i], VK_NULL_HANDLE);
+//	}
+//	free(images);
+//}
 
 static VkImageView *createImageViews(const VkDevice device, const VkImage *images, const VkSurfaceFormatKHR format, const uint32_t imageNumber, const uint32_t imageArrayLayers){
 	VkImageView *imageViews = (VkImageView *)malloc(imageNumber * sizeof(VkImageView));
@@ -112,17 +111,17 @@ static VkPresentModeKHR getBestPresentMode(const VkSurfaceKHR surface, const VkP
 	return bestPresentMode;
 }
 
-static VkExtent2D getBestSwapchainExtent(const VkSurfaceCapabilitiesKHR surfaceCapabilities, const GLFWwindow *window, const int FramebufferWidth, const int FramebufferHeight){
+static VkExtent2D getBestSwapchainExtent(const VkSurfaceCapabilitiesKHR surfaceCapabilities, const int FramebufferWidth, const int FramebufferHeight){
 
 	VkExtent2D bestSwapchainExtent;
 
-	if(surfaceCapabilities.currentExtent.width < FramebufferWidth){
+	if((int)surfaceCapabilities.currentExtent.width < FramebufferWidth){
 		bestSwapchainExtent.width = surfaceCapabilities.currentExtent.width;
 	}else{
 		bestSwapchainExtent.width = FramebufferWidth;
 	}
 
-	if(surfaceCapabilities.currentExtent.height < FramebufferHeight){
+	if((int)surfaceCapabilities.currentExtent.height < FramebufferHeight){
 		bestSwapchainExtent.height = surfaceCapabilities.currentExtent.height;
 	}else{
 		bestSwapchainExtent.height = FramebufferHeight;
@@ -138,7 +137,7 @@ swapchainAttachment createSwapchainAttachment(const VkDevice device, const VkPhy
 	glfwGetFramebufferSize(pWindow, &FramebufferWidth, &FramebufferHeight);
 	VkSurfaceCapabilitiesKHR surfaceCapabilities = getSurfaceCapabilities(surface, physicalDevice);
 
-	attachment.extent = getBestSwapchainExtent(surfaceCapabilities, pWindow, FramebufferWidth, FramebufferHeight);
+	attachment.extent = getBestSwapchainExtent(surfaceCapabilities, FramebufferWidth, FramebufferHeight);
 	attachment.surfaceFormat = getBestSurfaceFormat(surface, physicalDevice);
 	attachment.swapchain = createSwapChain(device, surface, surfaceCapabilities, attachment.surfaceFormat, attachment.extent, presentMode, imageArrayLayers, graphicsQueueMode);
 	attachment.imageNum = getSwapchainImageNumber(device, attachment.swapchain);

@@ -2,7 +2,9 @@
 #define GLFW_FUN_H
 
 #include "vulkan_game/std_c.h"
-#include "vulkan_game/std_c.h"
+
+#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
 
 GLFWwindow *createVulkanWindow(const char *title);
 void deleteWindow(GLFWwindow *pWindow);

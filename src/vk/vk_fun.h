@@ -183,7 +183,7 @@ uint32_t getqueueFamilyNumber(const VkPhysicalDevice physicalDevice);
 VkQueueFamilyProperties *getQueueFamilyProperties(const VkPhysicalDevice physicalDevice, const uint32_t queueFamilyNumber);
 uint32_t getBestGraphicsQueueFamilyindex(const VkQueueFamilyProperties *pQueueFamilyProperties, const uint32_t queueFamilyNumber);
 void deleteQueueFamilyProperties(VkQueueFamilyProperties **ppQueueFamilyProperties);
-queueAttachment createQueueAttachment(const VkDevice device, const VkPhysicalDevice physicalDevice, const uint32_t queueFamilyNumber, const VkQueueFamilyProperties *queueFamilyProperties, const uint32_t bestGraphicsQueueFamilyindex);
+queueAttachment createQueueAttachment(const VkDevice device, const VkQueueFamilyProperties *queueFamilyProperties, const uint32_t bestGraphicsQueueFamilyindex);
 VkPresentInfoKHR createPresentInfoKHR(const VkSemaphore *pWaitSemaphores, const VkSwapchainKHR *pSwapchain, const uint32_t *pImageIndex);
 VkSubmitInfo createSubmitInfo(const VkSemaphore *pWaitSemaphores, const VkCommandBuffer *pCommandBuffer, const VkSemaphore *pSignalSemaphores, const VkPipelineStageFlags *pPipelineStage);
 

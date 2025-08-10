@@ -52,27 +52,27 @@ static void updateCubeFace(uint32_t faceIndex){
 	switch (faceIndex)
 	{
 	case 0: // POSITIVE_X
-		mat4_rotate(viewMatrix, viewMatrix, radians(90.0f), (float[]){0.0f, 1.0f, 0.0f});
-		mat4_rotate(viewMatrix, viewMatrix, radians(180.0f), (float[]){1.0f, 0.0f, 0.0f});
+		mat4_rotate(viewMatrix, (const float(*)[4])viewMatrix, radians(90.0f), (float[]){0.0f, 1.0f, 0.0f});
+		mat4_rotate(viewMatrix, (const float(*)[4])viewMatrix, radians(180.0f), (float[]){1.0f, 0.0f, 0.0f});
 		break;
 	case 1: // NEGATIVE_X
-		mat4_rotate(viewMatrix, viewMatrix, radians(-90.0f), (float[]){0.0f, 1.0f, 0.0f});
-		mat4_rotate(viewMatrix, viewMatrix, radians(180.0f), (float[]){1.0f, 0.0f, 0.0f});
+		mat4_rotate(viewMatrix, (const float(*)[4])viewMatrix, radians(-90.0f), (float[]){0.0f, 1.0f, 0.0f});
+		mat4_rotate(viewMatrix, (const float(*)[4])viewMatrix, radians(180.0f), (float[]){1.0f, 0.0f, 0.0f});
 		break;
 	case 2: // POSITIVE_Y
 		//mat4_rotate(viewMatrix, viewMatrix, radians(180.0f), (float[]){0.0f, 0.0f, 1.0f});
-		mat4_rotate(viewMatrix, viewMatrix, radians(90.0f), (float[]){1.0f, 0.0f, 0.0f});
+		mat4_rotate(viewMatrix, (const float(*)[4])viewMatrix, radians(90.0f), (float[]){1.0f, 0.0f, 0.0f});
 		break;
 	case 3: // NEGATIVE_Y
 		//mat4_rotate(viewMatrix, viewMatrix, radians(180.0f), (float[]){0.0f, 0.0f, 1.0f});
-		mat4_rotate(viewMatrix, viewMatrix, radians(-90.0f), (float[]){1.0f, 0.0f, 0.0f});
+		mat4_rotate(viewMatrix, (const float(*)[4])viewMatrix, radians(-90.0f), (float[]){1.0f, 0.0f, 0.0f});
 		break;
 	case 4: // POSITIVE_Z
-		mat4_rotate(viewMatrix, viewMatrix, radians(180.0f), (float[]){1.0f, 0.0f, 0.0f});
+		mat4_rotate(viewMatrix, (const float(*)[4])viewMatrix, radians(180.0f), (float[]){1.0f, 0.0f, 0.0f});
 		break;
 	case 5: // NEGATIVE_Z
 		//viewMatrix[0][0] = -1.0f;
-		mat4_rotate(viewMatrix, viewMatrix, radians(180.0f), (float[]){0.0f, 0.0f, 1.0f});
+		mat4_rotate(viewMatrix, (const float(*)[4])viewMatrix, radians(180.0f), (float[]){0.0f, 0.0f, 1.0f});
 		break;
 	}
 	vkCmdBeginRenderPass(command.buffers[currentFrame], &offScreenPass.beginInfos[faceIndex], VK_SUBPASS_CONTENTS_INLINE);
@@ -204,7 +204,7 @@ void initVulkan(GLFWwindow *pWindow){
 	uint32_t bestGraphicsQueueFamilyindex = getBestGraphicsQueueFamilyindex(queueFamilyProperties, queueFamilyNumber);
 	
 	device = createDevice(physicalDevice, queueFamilyNumber, queueFamilyProperties);
-	queue = createQueueAttachment(device, physicalDevice, queueFamilyNumber, queueFamilyProperties, bestGraphicsQueueFamilyindex);
+	queue = createQueueAttachment(device, queueFamilyProperties, bestGraphicsQueueFamilyindex);
 	surface = createSurface(pWindow, instance, physicalDevice, bestGraphicsQueueFamilyindex);
 
 	deleteQueueFamilyProperties(&queueFamilyProperties);

@@ -16,10 +16,18 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
 endif()
 
+# Option to treat warnings as errors
+option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
+
 # Compiler-specific flags
 if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
     # Warning flags
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -Wformat-security")
+    
+    # Treat warnings as errors if enabled
+    if(WARNINGS_AS_ERRORS)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror")
+    endif()
     
     # Debug flags
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -O0 -DDEBUG")
@@ -54,6 +62,27 @@ file(GLOB_RECURSE SOURCES
 
 # Create the executable
 add_executable(vulkan_game ${SOURCES})
+
+# Set strict warnings for your source code only
+target_compile_options(vulkan_game PRIVATE
+    $<$<COMPILE_LANGUAGE:C>:-Wall -Wextra -Wpedantic -Wformat-security>
+    $<$<AND:$<COMPILE_LANGUAGE:C>,$<BOOL:${WARNINGS_AS_ERRORS}>>:-Werror>
+)
+
+# Set less strict warnings for external dependencies
+set_source_files_properties(
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/CThreads/cthreads.c
+    PROPERTIES COMPILE_FLAGS "-Wno-unused-parameter"
+)
+
+# Alternative: Apply to all external files
+file(GLOB_RECURSE EXTERNAL_SOURCES 
+    "${CMAKE_CURRENT_SOURCE_DIR}/external/*/*.c"
+)
+set_source_files_properties(
+    ${EXTERNAL_SOURCES}
+    PROPERTIES COMPILE_FLAGS "-Wno-unused-parameter -Wno-missing-braces"
+)
 
 # Set target properties
 set_target_properties(vulkan_game PROPERTIES

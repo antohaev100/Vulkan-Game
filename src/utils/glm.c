@@ -73,23 +73,21 @@ void mat4_identity(float mat[4][4]) {
 
 void mat4_rotate(float result[4][4], const float mat[4][4], const float angle, const float cords[3]) {
     float cCords[3];
-    float cMat[4][4];
     memcpy(cCords, cords, 3 * sizeof(float));
-    memcpy(cMat, mat, 16 * sizeof(float));
     normalize(cCords);
     float x = cCords[0], y = cCords[1], z = cCords[2];
     float c = cosf(angle);
     float s = sinf(angle);
     float t = 1.0f - c;
 
-    float rotation[4][4] = {
+    const float rotation[4][4] = {
         {t * x * x + c,     t * x * y - s * z, t * x * z + s * y, 0.0f},
         {t * x * y + s * z, t * y * y + c,     t * y * z - s * x, 0.0f},
         {t * x * z - s * y, t * y * z + s * x, t * z * z + c,     0.0f},
         {0.0f,              0.0f,              0.0f,              1.0f}
     };
 
-    mat4_multiply(result, cMat, rotation);
+    mat4_multiply(result, mat, rotation);
 }
 
 void mat4_lookat(float mat[4][4], const float eye[3], const float center[3], const float up[3]) {

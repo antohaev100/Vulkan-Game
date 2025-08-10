@@ -67,7 +67,7 @@ static VkQueue getPresentingQueue(const VkDevice device, const uint32_t graphics
 	return presentingQueue;
 }
 
-queueAttachment createQueueAttachment(const VkDevice device, const VkPhysicalDevice physicalDevice, const uint32_t queueFamilyNumber, const VkQueueFamilyProperties *queueFamilyProperties, const uint32_t bestGraphicsQueueFamilyindex){
+queueAttachment createQueueAttachment(const VkDevice device, const VkQueueFamilyProperties *queueFamilyProperties, const uint32_t bestGraphicsQueueFamilyindex){
 	queueAttachment queue;
 	queue.drawingMode = getGraphicsQueueMode(queueFamilyProperties, bestGraphicsQueueFamilyindex);
 	queue.drawing = getDrawingQueue(device, bestGraphicsQueueFamilyindex);

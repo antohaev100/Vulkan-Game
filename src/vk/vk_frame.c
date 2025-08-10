@@ -166,7 +166,7 @@ sceneRenderPassAttachment createScenePass(const VkDevice device, const VkPhysica
 	pass.color = createFrameBufferAttachment(device, physicalDevice, extent.width, extent.height, surfaceFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, numSamples, VK_IMAGE_ASPECT_COLOR_BIT, 1, 0, VK_IMAGE_VIEW_TYPE_2D);
 	pass.depth = createFrameBufferAttachment(device, physicalDevice, extent.width, extent.height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, numSamples, VK_IMAGE_ASPECT_DEPTH_BIT, 1, 0, VK_IMAGE_VIEW_TYPE_2D);
 	pass.frameBuffers = createFramebuffers(device, pass.renderPass, extent, swapchainImageViews, imageViewNumber, pass.depth.view, pass.color.view);
-	pass.clearValues = configureClearValues((VkClearColorValue){0.0f, 0.0f, 0.0f, 1.0f}, (VkClearDepthStencilValue){1.0f, 0});
+	pass.clearValues = configureClearValues((VkClearColorValue){{0.0f, 0.0f, 0.0f, 1.0f}}, (VkClearDepthStencilValue){1.0f, 0});
 	pass.beginInfos = configureRenderPassBeginInfo(pass.renderPass, pass.frameBuffers, imageViewNumber, extent, pass.clearValues, 2);
 	return pass;
 }
@@ -180,7 +180,7 @@ void deleteScenePass(const VkDevice device, sceneRenderPassAttachment *pPass, co
 	deleteRenderPassBeginInfos(pPass->beginInfos);
 }
 
-static VkRenderPass createOffScreenRenderPass(const VkDevice device, const VkPhysicalDevice physicalDevice, const VkFormat depthFormat, const VkFormat colorFormat){
+static VkRenderPass createOffScreenRenderPass(const VkDevice device, const VkFormat depthFormat, const VkFormat colorFormat){
 	VkAttachmentDescription attachmentDescriptions[2] = {
 		{
 			.flags = 0,
@@ -270,20 +270,20 @@ static void deleteOffScreenFrameBuffers(const VkDevice device, VkFramebuffer *fr
 	free(frameBuffers);
 }
 
-static VkRenderPassBeginInfo createOffScreenRenderPassBeginInfo(const VkRenderPass renderPass, const VkFramebuffer frameBuffer, const uint32_t shadowMapResolution, const VkClearValue *pClearValue){
-	VkRenderPassBeginInfo beginInfo = {
-		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-		.renderPass = renderPass,
-		.framebuffer = frameBuffer,
-		.renderArea = {
-			.offset = {0, 0},
-			.extent = {shadowMapResolution, shadowMapResolution}
-		},
-		.clearValueCount = 1,
-		.pClearValues = pClearValue
-	};
-	return beginInfo;
-}
+//static VkRenderPassBeginInfo createOffScreenRenderPassBeginInfo(const VkRenderPass renderPass, const VkFramebuffer frameBuffer, const uint32_t shadowMapResolution, const VkClearValue *pClearValue){
+//	VkRenderPassBeginInfo beginInfo = {
+//		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+//		.renderPass = renderPass,
+//		.framebuffer = frameBuffer,
+//		.renderArea = {
+//			.offset = {0, 0},
+//			.extent = {shadowMapResolution, shadowMapResolution}
+//		},
+//		.clearValueCount = 1,
+//		.pClearValues = pClearValue
+//	};
+//	return beginInfo;
+//}
 
 offScreenRenderPassAttachment createOffScreenPass(const VkDevice device, const VkPhysicalDevice physicalDevice, const VkFormat depthFormat, const VkFormat colorFormat, const uint32_t shadowMapResolution, const VkCommandPool commandPool, const VkQueue drawingQueue){
 	offScreenRenderPassAttachment pass;
@@ -292,7 +292,7 @@ offScreenRenderPassAttachment createOffScreenPass(const VkDevice device, const V
 	pass.shadowMap.ImageViews = createShadowCubeMapFaceImageViews(device, pass.shadowMap.color.image.image, colorFormat);
 	pass.shadowMap.sampler = createSampler(device, VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER, VK_COMPARE_OP_NEVER);
 
-	pass.renderPass = createOffScreenRenderPass(device, physicalDevice, depthFormat, colorFormat);
+	pass.renderPass = createOffScreenRenderPass(device, depthFormat, colorFormat);
 	VkImageAspectFlagBits aspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT;
 	if (depthFormat >= VK_FORMAT_D16_UNORM_S8_UINT) {
 		aspectFlags |= VK_IMAGE_ASPECT_STENCIL_BIT;
@@ -300,7 +300,7 @@ offScreenRenderPassAttachment createOffScreenPass(const VkDevice device, const V
 	pass.depth = createFrameBufferAttachment(device, physicalDevice, shadowMapResolution, shadowMapResolution, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VK_SAMPLE_COUNT_1_BIT, aspectFlags, 1, 0, VK_IMAGE_VIEW_TYPE_2D);
 	transferImageLayout(device, commandPool, drawingQueue, pass.depth.image.image, 1, 0, VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT, aspectFlags);
 	pass.frameBuffers = createOffScreenFrameBuffers(device, pass.renderPass, pass.depth.view, pass.shadowMap.ImageViews, shadowMapResolution);
-	pass.clearValues = configureClearValues((VkClearColorValue){0.0f, 0.0f, 0.0f, 1.0f}, (VkClearDepthStencilValue){1.0f, 0});
+	pass.clearValues = configureClearValues((VkClearColorValue){{0.0f, 0.0f, 0.0f, 1.0f}}, (VkClearDepthStencilValue){1.0f, 0});
 	pass.beginInfos = configureRenderPassBeginInfo(pass.renderPass, pass.frameBuffers, 6, (VkExtent2D){shadowMapResolution, shadowMapResolution}, pass.clearValues, 2);
 	return pass;
 }

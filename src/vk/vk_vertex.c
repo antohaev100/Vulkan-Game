@@ -71,22 +71,22 @@ static void copyBuffer(VkBuffer *pDstBuffer, const VkBuffer srcBuffer, const VkD
 }
 
 //TODO:
-static VkBufferandMemory createStaticBuffer(const void *pData, const VkDevice device, const VkPhysicalDevice physicalDevice, const VkQueue graphicsQueue, const VkCommandPool commandPool, const uint32_t bufferSize, const VkBufferUsageFlags usage) {
-    VkBufferandMemory staging = createBuffer(device, physicalDevice, bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-    void* tempData;
-    vkMapMemory(device, staging.memory, 0, bufferSize, 0, &tempData);
-        memcpy(tempData, pData, (size_t) bufferSize);
-    vkUnmapMemory(device, staging.memory);
-
-    VkBufferandMemory special = createBuffer(device, physicalDevice, bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-
-    copyBuffer(&special.buffer, staging.buffer, bufferSize, device, graphicsQueue, commandPool);
-    vkDestroyBuffer(device, staging.buffer, VK_NULL_HANDLE);
-    vkFreeMemory(device, staging.memory, VK_NULL_HANDLE);
-
-    return special;
-}
+//static VkBufferandMemory createStaticBuffer(const void *pData, const VkDevice device, const VkPhysicalDevice physicalDevice, const VkQueue graphicsQueue, const VkCommandPool commandPool, const uint32_t bufferSize, const VkBufferUsageFlags usage) {
+//    VkBufferandMemory staging = createBuffer(device, physicalDevice, bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+//
+//    void* tempData;
+//    vkMapMemory(device, staging.memory, 0, bufferSize, 0, &tempData);
+//        memcpy(tempData, pData, (size_t) bufferSize);
+//    vkUnmapMemory(device, staging.memory);
+//
+//    VkBufferandMemory special = createBuffer(device, physicalDevice, bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+//
+//    copyBuffer(&special.buffer, staging.buffer, bufferSize, device, graphicsQueue, commandPool);
+//    vkDestroyBuffer(device, staging.buffer, VK_NULL_HANDLE);
+//    vkFreeMemory(device, staging.memory, VK_NULL_HANDLE);
+//
+//    return special;
+//}
 
 void deleteBuffer(const VkDevice device, VkBufferandMemory *pBufferandMemory) {
     vkDestroyBuffer(device, pBufferandMemory->buffer, VK_NULL_HANDLE);
@@ -127,7 +127,7 @@ dynamicBuffers createDynamicBuffers(const VkDevice device, const VkPhysicalDevic
     buffers.buffers = malloc(frameNum * sizeof(vertexAndIndexBuffers));
     buffers.staging = malloc(frameNum * sizeof(stagingBufferAttachment));
 
-    for(int i = 0; i < frameNum; i++){
+    for(uint32_t i = 0; i < frameNum; i++){
         //staging buffers
         buffers.staging[i].vertexBufferSize = vertices.c * vertices.elemSize;
         buffers.staging[i].indexBufferSize = indices.c * indices.elemSize;
@@ -149,7 +149,7 @@ dynamicBuffers createDynamicBuffers(const VkDevice device, const VkPhysicalDevic
 }
 
 void deleteDynamicBuffers(const VkDevice device, dynamicBuffers *pBuffers, const uint32_t frameNum){
-    for(int i = 0; i < frameNum; i++){
+    for(uint32_t i = 0; i < frameNum; i++){
         vkUnmapMemory(device, pBuffers->staging[i].index.buffer.memory);
         deleteBuffer(device, &pBuffers->staging[i].index.buffer);
         vkUnmapMemory(device, pBuffers->staging[i].vertex.buffer.memory);

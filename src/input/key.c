@@ -7,6 +7,10 @@ static int windowedPosX, windowedPosY, windowedWidth, windowedHeight;
 
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    // Suppress unused parameter warnings
+    (void)scancode;
+    (void)mods;
+    
     //Retrive the shared pBuffer
     sharedBuffer *pBuffer = (sharedBuffer *)glfwGetWindowUserPointer(window);
     if(pBuffer == NULL){
