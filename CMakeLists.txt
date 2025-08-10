@@ -76,47 +76,117 @@ target_link_libraries(vulkan_game PRIVATE
 # Create build directory for shaders
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/shaders)
 
-# Find glslangValidator
+# Find glslangValidator with better error handling
 find_program(GLSLANG_VALIDATOR
     NAMES glslangValidator glslangValidator.exe
     HINTS 
         ${Vulkan_GLSLANG_VALIDATOR_EXECUTABLE}
         $ENV{VULKAN_SDK}/bin
         $ENV{VULKAN_SDK}/Bin
-    REQUIRED
+        $ENV{VULKAN_SDK}/x86_64/bin
+        $ENV{VK_SDK_PATH}/bin
+        /usr/bin
+        /usr/local/bin
+    DOC "Vulkan GLSL compiler"
 )
 
-# Function to compile shaders
-function(compile_shader SHADER_SOURCE SHADER_OUTPUT)
+if(NOT GLSLANG_VALIDATOR)
+    message(FATAL_ERROR "glslangValidator not found! Please install Vulkan SDK or set VULKAN_SDK environment variable.")
+endif()
+
+message(STATUS "GLSL Validator: ${GLSLANG_VALIDATOR}")
+
+# Automatically discover all shader files
+file(GLOB_RECURSE SHADER_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.vert"
+    "${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.frag"
+    "${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.comp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.geom"
+    "${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.tesc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.tese"
+)
+
+# Enhanced shader compilation function with validation and error reporting
+function(compile_shader SHADER_PATH)
+    # Get shader filename and create output path
+    get_filename_component(SHADER_NAME ${SHADER_PATH} NAME)
+    set(SHADER_OUTPUT "${CMAKE_BINARY_DIR}/shaders/${SHADER_NAME}.spv")
+    
+    # Get relative path for better display
+    file(RELATIVE_PATH SHADER_REL_PATH ${CMAKE_CURRENT_SOURCE_DIR} ${SHADER_PATH})
+    
     add_custom_command(
-        OUTPUT ${CMAKE_BINARY_DIR}/shaders/${SHADER_OUTPUT}
+        OUTPUT ${SHADER_OUTPUT}
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/shaders
-        COMMAND ${GLSLANG_VALIDATOR} -V ${CMAKE_CURRENT_SOURCE_DIR}/shaders/${SHADER_SOURCE} 
-                -o ${CMAKE_BINARY_DIR}/shaders/${SHADER_OUTPUT}
-        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/shaders/${SHADER_SOURCE}
-        COMMENT "Compiling shader: ${SHADER_SOURCE}"
+        # Compile with validation and optimization
+        COMMAND ${GLSLANG_VALIDATOR} 
+            -V                          # Vulkan semantics
+            --target-env vulkan1.0      # Target Vulkan 1.0
+            -o ${SHADER_OUTPUT}         # Output file
+            ${SHADER_PATH}              # Input file
+        # Add debug info for debug builds
+        $<$<CONFIG:Debug>:--debug>
+        # Add optimization for release builds  
+        $<$<CONFIG:Release>:-Os>
+        DEPENDS ${SHADER_PATH}
+        COMMENT "Compiling shader: ${SHADER_REL_PATH} -> ${SHADER_NAME}.spv"
         VERBATIM
     )
+    
+    # Add to global shader list
+    set_property(GLOBAL APPEND PROPERTY SHADER_OUTPUTS ${SHADER_OUTPUT})
 endfunction()
 
-# Compile all shaders
-compile_shader(scene.vert scene.vert.spv)
-compile_shader(scene.frag scene.frag.spv)
-compile_shader(shadow.vert shadow.vert.spv)
-compile_shader(shadow.frag shadow.frag.spv)
+# Compile all discovered shaders
+set_property(GLOBAL PROPERTY SHADER_OUTPUTS "")
+foreach(SHADER_FILE ${SHADER_SOURCES})
+    compile_shader(${SHADER_FILE})
+endforeach()
 
-# Create shader compilation target
+# Get all compiled shader outputs
+get_property(ALL_SHADER_OUTPUTS GLOBAL PROPERTY SHADER_OUTPUTS)
+
+# Create shader compilation target with better reporting
 add_custom_target(compile_shaders ALL
-    DEPENDS 
-        ${CMAKE_BINARY_DIR}/shaders/scene.vert.spv 
-        ${CMAKE_BINARY_DIR}/shaders/scene.frag.spv
-        ${CMAKE_BINARY_DIR}/shaders/shadow.vert.spv
-        ${CMAKE_BINARY_DIR}/shaders/shadow.frag.spv
-    COMMENT "Compiling all shaders"
+    DEPENDS ${ALL_SHADER_OUTPUTS}
+    COMMENT "Compiling ${CMAKE_MATCH_COUNT} shader(s) to SPIR-V"
 )
+
+# Add shader validation target (optional, for development)
+add_custom_target(validate_shaders
+    COMMAND ${CMAKE_COMMAND} -E echo "Validating all shaders..."
+    COMMENT "Running shader validation"
+)
+
+foreach(SHADER_FILE ${SHADER_SOURCES})
+    get_filename_component(SHADER_NAME ${SHADER_FILE} NAME)
+    add_custom_command(TARGET validate_shaders POST_BUILD
+        COMMAND ${GLSLANG_VALIDATOR} -V --quiet ${SHADER_FILE}
+        COMMENT "Validating ${SHADER_NAME}"
+        VERBATIM
+    )
+endforeach()
 
 # Make executable depend on shaders
 add_dependencies(vulkan_game compile_shaders)
+
+# Print shader compilation information
+list(LENGTH SHADER_SOURCES SHADER_COUNT)
+message(STATUS "Found ${SHADER_COUNT} shader file(s) to compile:")
+foreach(SHADER_FILE ${SHADER_SOURCES})
+    file(RELATIVE_PATH SHADER_REL_PATH ${CMAKE_CURRENT_SOURCE_DIR} ${SHADER_FILE})
+    message(STATUS "  - ${SHADER_REL_PATH}")
+endforeach()
+
+# Make executable depend on shaders
+add_dependencies(vulkan_game compile_shaders)
+
+# Add target to clean compiled shaders
+add_custom_target(clean_shaders
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/shaders
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/shaders
+    COMMENT "Cleaning compiled shaders"
+)
 
 # Print build information
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
@@ -125,3 +195,4 @@ message(STATUS "Vulkan found: ${Vulkan_FOUND}")
 message(STATUS "Vulkan include: ${Vulkan_INCLUDE_DIRS}")
 message(STATUS "GLFW found: ${glfw3_FOUND}")
 message(STATUS "GLSL Validator: ${GLSLANG_VALIDATOR}")
+message(STATUS "Shader output directory: ${CMAKE_BINARY_DIR}/shaders")
