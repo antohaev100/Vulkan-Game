@@ -38,6 +38,10 @@ endif()
 find_package(Vulkan REQUIRED)
 find_package(glfw3 REQUIRED)
 
+# if GLFW isn't found automatically
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GLFW3 REQUIRED glfw3)
+
 # Find OpenMP (commented out as in original)
 #find_package(OpenMP REQUIRED)
 
@@ -115,19 +119,21 @@ function(compile_shader SHADER_PATH)
     # Get relative path for better display
     file(RELATIVE_PATH SHADER_REL_PATH ${CMAKE_CURRENT_SOURCE_DIR} ${SHADER_PATH})
     
+    # Determine compilation flags based on build type
+    set(SHADER_FLAGS "")
+    if(CMAKE_BUILD_TYPE STREQUAL "Release")
+        set(SHADER_FLAGS "-Os")  # Optimize for size in release builds
+    endif()
+    
     add_custom_command(
         OUTPUT ${SHADER_OUTPUT}
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/shaders
-        # Compile with validation and optimization
         COMMAND ${GLSLANG_VALIDATOR} 
             -V                          # Vulkan semantics
             --target-env vulkan1.0      # Target Vulkan 1.0
             -o ${SHADER_OUTPUT}         # Output file
             ${SHADER_PATH}              # Input file
-        # Add debug info for debug builds
-        $<$<CONFIG:Debug>:--debug>
-        # Add optimization for release builds  
-        $<$<CONFIG:Release>:-Os>
+            ${SHADER_FLAGS}             # Optional optimization flags
         DEPENDS ${SHADER_PATH}
         COMMENT "Compiling shader: ${SHADER_REL_PATH} -> ${SHADER_NAME}.spv"
         VERBATIM
