@@ -1,5 +1,5 @@
-#include "shared_buffer.h"
-#include "utils.h"
+#include "vulkan_game/shared_buffer.h"
+#include "vulkan_game/utils.h"
 
 static const float Up[] = {0.0f, 0.0f, 1.0f}; // Up direction for the game
 static float nextPlayerPos[3] = {0.0f, 0.0f, 0.25f};

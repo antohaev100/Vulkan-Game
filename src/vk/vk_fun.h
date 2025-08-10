@@ -1,10 +1,10 @@
 #ifndef VK_FUN_H
 #define VK_FUN_H
 
-#include "std_c.h"
-#include "ext.h"
-#include "utils.h"
-#include "shared_buffer.h"
+#include "vulkan_game/std_c.h"
+#include "vulkan_game/ext.h"
+#include "vulkan_game/utils.h"
+#include "vulkan_game/shared_buffer.h"
 
 #define ELLIPSOIDDETAIL 10
 #define VerticesPerEllipsoid ELLIPSOIDDETAIL * ELLIPSOIDDETAIL * 2 - 4 * ELLIPSOIDDETAIL + 2
