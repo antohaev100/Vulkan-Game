@@ -1,94 +1,138 @@
-# Vulkan Game
+# Vulkan Game Engine
 
-A high-performance 3D game built from scratch in C using the Vulkan API. This project demonstrates modern graphics programming techniques with low-level GPU control, featuring advanced rendering capabilities including shadow mapping, physics simulation, and multi-threaded architecture.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Educational](https://img.shields.io/badge/purpose-educational-blue.svg)]()
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue.svg)]()
+[![Vulkan](https://img.shields.io/badge/Vulkan-1.0%2B-red.svg)](https://www.vulkan.org/)
+[![Status](https://img.shields.io/badge/status-completed-green.svg)]()
 
-## Features
+A **completed educational project** demonstrating high-performance 3D graphics programming with the Vulkan API in C. This project serves as a comprehensive learning resource for modern graphics programming techniques, featuring real-time shadow mapping, multi-threaded architecture, and low-level GPU optimization.
 
-- **Vulkan Rendering**: Direct GPU programming with Vulkan API for maximum performance
-- **Shadow Mapping**: Real-time dynamic shadows for enhanced visual quality
-- **Physics Engine**: Custom physics simulation with collision detection
-- **Multi-threaded Architecture**: Separate threads for rendering, input, physics, and audio
-- **Cross-platform Support**: Windows, Linux, and macOS compatibility
-- **Modern Build System**: CMake with automatic shader compilation and dependency management
+> **� Educational Resource**: This project is complete and available for learning, study, and unrestricted use under MIT license. No ongoing maintenance or support is provided.
 
-## System Requirements
+**🔓 Free to Use**: Fork, modify, learn from, and use in your own projects without restrictions.
 
-### Minimum Requirements
-- **OS**: Windows 10, Linux (Ubuntu 18.04+), or macOS 10.15+
-- **Graphics**: Vulkan 1.0 compatible GPU
-  - NVIDIA GeForce GTX 600 series or newer
-  - AMD Radeon HD 7000 series or newer
-  - Intel HD Graphics 4000 or newer (with driver support)
-- **RAM**: 4 GB minimum, 8 GB recommended
-- **Storage**: 100 MB available space
+## ✅ Implemented Features
+
+### Graphics Rendering Engine
+- **🎨 Vulkan API Integration**: Complete low-level graphics API implementation
+- **🌑 Real-time Shadow Mapping**: Cube map shadows with multi-pass rendering
+- **🎮 Dynamic Geometry**: Runtime generation of spheres, ellipsoids, cuboids, and cylinders
+- **⚡ Memory Management**: Efficient GPU memory allocation and buffer management
+- **🔧 Shader System**: GLSL to SPIR-V compilation with hot-reload support
+
+### Engine Architecture
+- **🧵 Multi-Threading**: Separate threads for rendering, physics, input, and audio
+- **🎯 Cross-Platform**: Native support for Windows, Linux, and macOS
+- **🛠️ Build System**: CMake with automatic shader compilation and dependency management
+- **📊 Performance Monitoring**: Built-in timing and profiling capabilities
+- **🔍 Debug Support**: Comprehensive Vulkan validation layers and error checking
+
+### Learning Demonstrations
+- **🎓 Modern C Programming**: C11 standard with clean, readable code
+- **💡 Graphics Algorithms**: Shadow mapping, lighting, and rendering techniques
+- **🏗️ Software Architecture**: Modular design with clear separation of concerns
+- **⚙️ Performance Optimization**: GPU-focused optimization and memory management
+
+## 📋 System Requirements
+
+### Minimum Specifications
+| Component | Requirement |
+|-----------|-------------|
+| **OS** | Windows 10, Linux (Ubuntu 18.04+), macOS 10.15+ |
+| **Graphics** | Vulkan 1.0 compatible GPU |
+| **GPU Examples** | NVIDIA GTX 600+, AMD Radeon HD 7000+, Intel HD 4000+ |
+| **RAM** | 4 GB (8 GB recommended) |
+| **Storage** | 200 MB available space |
+| **Network** | Internet connection for dependency download |
 
 ### Development Requirements
-- **Compiler**: GCC 7.0+, Clang 6.0+, or MSVC 2019+
-- **CMake**: Version 3.16 or newer
-- **Vulkan SDK**: Version 1.0 or newer
-- **Git**: For cloning and submodule management
+| Tool | Version | Purpose |
+|------|---------|---------|
+| **CMake** | 3.16+ | Build system |
+| **Vulkan SDK** | 1.0+ | Graphics API |
+| **Compiler** | GCC 7.0+, Clang 6.0+, MSVC 2019+ | C11 compilation |
+| **Git** | Latest | Version control and dependencies |
 
-## Dependencies
+## 📦 Dependencies
 
-This project uses the following third-party libraries:
-- **Vulkan**: Graphics API
-- **GLFW**: Window management and input handling
-- **STB Image**: Image loading (header-only)
-- **Tiny OBJ Loader**: 3D model loading (header-only)
-- **CThreads**: Cross-platform threading
-- **Timer Library**: High-resolution timing
+This project uses carefully selected third-party libraries for optimal performance:
 
-All dependencies are either included in the repository or automatically discovered by CMake.
+| Library | Purpose | Integration | License |
+|---------|---------|-------------|---------|
+| **Vulkan API** | Core graphics rendering | System/SDK | Apache 2.0 |
+| **GLFW** | Window & input management | System library | zlib/libpng |
+| **STB Image** | Image loading (textures) | Header-only | MIT/Public Domain |
+| **Tiny OBJ Loader** | 3D model loading | Header-only | MIT |
+| **CThreads** | Cross-platform threading | Source included | BSD 3-Clause |
+| **Timer Library** | High-resolution timing | Source included | Public Domain |
 
-## Building
+> **📁 Dependency Management**: All dependencies are included in the repository or auto-discovered by CMake. See [`external/README.md`](external/README.md) for detailed information and [`THIRD_PARTY_LICENSES.md`](THIRD_PARTY_LICENSES.md) for complete license compliance.
 
-### Prerequisites
+## 🚀 Quick Start
 
-**Required Components:**
-- Vulkan SDK 1.3+ with validation layers
-- GLFW 3.4+
-- CMake 3.16+
-- C compiler with C11 support
+### 1️⃣ Get the Code
+```bash
+git clone https://github.com/antohaev100/Vulkan-Game.git
+cd Vulkan-Game
+```
 
-### Platform-Specific Setup
+### 2️⃣ Install Prerequisites
 
-#### Windows (MSYS2/MinGW-w64) - Recommended
+<details>
+<summary><b>🪟 Windows (MSYS2/MinGW-w64)</b></summary>
+
 ```bash
 # Install MSYS2 from https://www.msys2.org/
 # Open UCRT64 terminal and install dependencies:
 
-pacman -S mingw-w64-ucrt-x86_64-vulkan-devel
-pacman -S mingw-w64-ucrt-x86_64-glfw
-pacman -S mingw-w64-ucrt-x86_64-cmake
-pacman -S mingw-w64-ucrt-x86_64-ninja
-pacman -S mingw-w64-ucrt-x86_64-gcc
+pacman -S mingw-w64-ucrt-x86_64-vulkan-devel \
+          mingw-w64-ucrt-x86_64-glfw \
+          mingw-w64-ucrt-x86_64-cmake \
+          mingw-w64-ucrt-x86_64-ninja \
+          mingw-w64-ucrt-x86_64-gcc
 
-# Set environment
+# Ensure correct PATH
 export PATH="/ucrt64/bin:$PATH"
 ```
+</details>
 
-#### Linux (Ubuntu/Debian)
+<details>
+<summary><b>🐧 Linux (Ubuntu/Debian)</b></summary>
+
 ```bash
 # Install Vulkan SDK
 wget -qO- https://packages.lunarg.com/lunarg-signing-key-pub.asc | sudo tee /etc/apt/trusted.gpg.d/lunarg.asc
-sudo wget -qO /etc/apt/sources.list.d/lunarg-vulkan-jammy.list http://packages.lunarg.com/vulkan/lunarg-vulkan-jammy.list
-sudo apt update
-sudo apt install vulkan-sdk
+sudo wget -qO /etc/apt/sources.list.d/lunarg-vulkan-jammy.list \
+    http://packages.lunarg.com/vulkan/lunarg-vulkan-jammy.list
+sudo apt update && sudo apt install vulkan-sdk
 
-# Install development tools and libraries
-sudo apt install build-essential cmake ninja-build
-sudo apt install libglfw3-dev
-sudo apt install libvulkan1 mesa-vulkan-drivers vulkan-utils
+# Install build tools and libraries
+sudo apt install build-essential cmake ninja-build libglfw3-dev \
+                 libvulkan1 mesa-vulkan-drivers vulkan-utils
 
 # Verify installation
 vulkaninfo --summary
 ```
+</details>
 
-#### macOS
+<details>
+<summary><b>🍎 macOS</b></summary>
+
 ```bash
-# Install Vulkan SDK
-# Download from: https://vulkan.lunarg.com/sdk/home
-# Install the .dmg package
+# Install Vulkan SDK from: https://vulkan.lunarg.com/sdk/home
+# Download and install the .dmg package
+
+# Install dependencies via Homebrew
+brew install cmake ninja glfw
+
+# Add to shell profile (~/.zshrc or ~/.bash_profile)
+export VULKAN_SDK="$HOME/VulkanSDK/x.x.x.x/macOS"
+export PATH="$VULKAN_SDK/bin:$PATH"
+export DYLD_LIBRARY_PATH="$VULKAN_SDK/lib:$DYLD_LIBRARY_PATH"
+export VK_ICD_FILENAMES="$VULKAN_SDK/share/vulkan/icd.d/MoltenVK_icd.json"
+```
+</details>
 
 # Install dependencies via Homebrew
 brew install cmake ninja glfw
@@ -104,206 +148,212 @@ export VK_LAYER_PATH="$VULKAN_SDK/share/vulkan/explicit_layer.d"
 source ~/.zshrc  # or ~/.bash_profile
 ```
 
-### Build Instructions
-
-1. **Clone and Navigate**
-   ```bash
-   git clone https://github.com/antohaev100/Vulkan-Game.git
-   cd Vulkan-Game
-   ```
-
-2. **Configure Build**
-   ```bash
-   # Debug build with validation layers (recommended for development)
-   cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
-   
-   # Release build (optimized for performance)
-   cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
-   
-   # Alternative without Ninja (uses system default)
-   cmake -B build -DCMAKE_BUILD_TYPE=Debug
-   ```
-
-3. **Build the Project**
-   ```bash
-   # Build everything (including automatic shader compilation)
-   cmake --build build
-   
-   # Parallel build (faster)
-   cmake --build build --parallel
-   ```
-
-4. **Run the Game**
-   ```bash
-   # Windows
-   build\vulkan_game.exe
-   
-   # Linux/macOS
-   ./build/vulkan_game
-   ```
-
-### Build Configuration Options
-
-- **Debug Mode**: Enables Vulkan validation layers, detailed error checking, and debug symbols
-- **Release Mode**: Optimized performance, minimal validation
-- **Shader Auto-compilation**: All `.vert` and `.frag` shaders automatically compile to `.spv`
-- **Cross-platform**: Same build commands work on Windows, Linux, and macOS
-
-### Build Targets
-
-The build system provides several useful targets:
+### 3️⃣ Build & Run
 
 ```bash
-# Build everything (default)
-cmake --build .
+# Configure build (choose one)
+cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug    # Development with validation
+cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release  # Optimized performance
 
-# Validate all shaders
-cmake --build . --target validate_shaders
+# Build project (includes automatic shader compilation)
+cmake --build build --parallel
 
-# Clean compiled shaders
-cmake --build . --target clean_shaders
-
-# Clean everything
-cmake --build . --target clean
+# Run the application
+./build/vulkan_game        # Linux/macOS
+build\vulkan_game.exe      # Windows
 ```
 
-## Development
+### 🎛️ Build Configuration Options
 
-### Project Structure
+| Configuration | Purpose | Features |
+|---------------|---------|----------|
+| **Debug** | Development | Validation layers, debug symbols, error checking |
+| **Release** | Performance | Optimized code, minimal validation |
+
+### 🔨 Available Build Targets
+
+```bash
+cmake --build build                        # Build everything
+cmake --build build --target validate_shaders  # Check shader syntax
+cmake --build build --target clean_shaders     # Clean compiled shaders  
+cmake --build build --target clean             # Clean all build files
 ```
-├── src/                    # Source code
+## 💻 Development
+
+### 📁 Project Architecture
+```
+vulkan_game/
+├── 📁 src/                     # Core source code
+│   ├── 🎨 vk/                 # Vulkan rendering engine
+│   │   ├── vk_instance.c      # Vulkan initialization
+│   │   ├── vk_device.c        # Device and queue management  
+│   │   ├── vk_swapchain.c     # Presentation surface
+│   │   ├── vk_pipeline.c      # Graphics pipeline creation
+│   │   ├── vk_geometry.c      # Mesh generation and vertex data
+│   │   ├── vk_shader.c        # Shader compilation and management
+│   │   └── vk_*.c             # Additional Vulkan systems
+│   ├── 🎮 input/              # Input handling (GLFW integration)
+│   ├── ⚡ physics/            # Physics simulation and collision
+│   ├── 🔧 utils/              # Utility functions and math
+│   └── 🚀 main.c              # Application entry point
+├── 📁 include/vulkan_game/    # Public headers and APIs
+├── 📁 shaders/                # GLSL shader source files
+│   ├── scene.vert/frag        # Main rendering shaders
+│   └── shadow.vert/frag       # Shadow mapping shaders
+├── 📁 external/               # Third-party dependencies
+├── 📁 build/                  # Build output (auto-generated)
+└── 📁 docs/                   # Documentation (if present)
+```
 │   ├── vk/                # Vulkan rendering engine
 │   ├── input/             # Input handling (GLFW)
 │   ├── physics/           # Physics simulation
 │   ├── utils/             # Utility functions
-│   └── main.c             # Application entry point
-├── include/vulkan_game/   # Public headers
-├── shaders/               # GLSL shader source files
-├── external/              # Third-party dependencies
-└── build/                 # Build output (generated)
-```
+### 🛠️ Development Guidelines
 
-### Shader Development
-Shaders are automatically compiled to SPIR-V during build:
-- Edit `.vert`, `.frag`, `.comp`, `.geom`, `.tesc`, or `.tese` files in `shaders/`
-- Compiled shaders are output to `build/shaders/`
-- Use `validate_shaders` target to check for errors without full build
+#### Code Standards
+- **Language**: C11 standard compliance
+- **Style**: Descriptive variable names, comprehensive error checking
+- **Architecture**: Modular design with clear separation of concerns
+- **Performance**: GPU-optimized algorithms and memory management
 
-### Code Style
-- C11 standard
-- Descriptive variable names
-- Comprehensive error checking for Vulkan calls
+#### Shader Development
+- **Auto-compilation**: `.vert`, `.frag` → `.spv` during build
+- **Validation**: Built-in syntax checking with `validate_shaders` target
+- **Hot-reload**: Modify shaders and rebuild for immediate changes
+- **Debugging**: Use Vulkan validation layers for detailed error reporting
 
-## Troubleshooting
+#### Vulkan Best Practices
+- Always check function return values
+- Properly destroy objects in reverse creation order
+- Use validation layers during development
+- Profile GPU memory usage and draw calls
 
-### Common Issues
+## 🔧 Troubleshooting
 
-#### Build Problems
+<details>
+<summary><b>🚫 Build Issues</b></summary>
 
 **"glslangValidator not found"**
-- Ensure Vulkan SDK is installed and `VULKAN_SDK` environment variable is set
-- Windows: Add `%VULKAN_SDK%\Bin` to PATH
-- Linux/macOS: Add `$VULKAN_SDK/bin` to PATH
-
-**"Vulkan library not found"**
-- Verify Vulkan SDK installation
-- Check that `vulkaninfo` command works
-- On Linux: Install mesa-vulkan-drivers
-- On macOS: Ensure MoltenVK is properly configured
-
-**CMake configuration fails**
 ```bash
-# Clear cache and reconfigure
-rm -rf build/
-cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
+# Ensure Vulkan SDK is installed and accessible
+echo $VULKAN_SDK                    # Should show SDK path
+which glslangValidator              # Should find binary
+export PATH="$VULKAN_SDK/bin:$PATH" # Add to PATH if needed
 ```
 
-#### Runtime Problems
+**"Vulkan library not found"**
+```bash
+# Verify Vulkan installation
+vulkaninfo --summary               # Should show GPU information
+pkg-config --libs vulkan           # Linux: check library paths
 
-**"Vulkan device not found" or validation layer errors**
-- Update graphics drivers to latest version
-- For integrated Intel graphics: Install Intel Graphics Driver
-- For NVIDIA: Install latest Game Ready drivers
-- For AMD: Install latest Adrenalin drivers
+# Reconfigure CMake with clean cache
+rm -rf build && cmake -B build -DCMAKE_BUILD_TYPE=Debug
+```
+</details>
+
+<details>
+<summary><b>⚡ Runtime Issues</b></summary>
 
 **Application crashes on startup**
-- Run with validation layers for detailed error information:
-  ```bash
-  # Debug build automatically enables validation layers
-  cmake -B build -DCMAKE_BUILD_TYPE=Debug
-  cmake --build build
-  ./build/vulkan_game
-  ```
+```bash
+# Enable detailed error reporting
+cmake -B build -DCMAKE_BUILD_TYPE=Debug
+cmake --build build
+./build/vulkan_game  # Check console output for errors
+```
 
-#### Platform-Specific Issues
+**"Vulkan device not found"**
+- Update GPU drivers to latest version
+- Install platform-specific Vulkan runtime:
+  - **Windows**: Included with driver updates
+  - **Linux**: `mesa-vulkan-drivers` or vendor drivers
+  - **macOS**: MoltenVK (included with Vulkan SDK)
 
-**Windows (MSYS2):**
-- Use UCRT64 environment, not MINGW64
+**Performance issues**
+```bash
+# Build optimized version
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+```
+</details>
+
+<details>
+<summary><b>🖥️ Platform-Specific Issues</b></summary>
+
+**Windows (MSYS2)**
+- Use **UCRT64** environment (not MINGW64)
 - Ensure PATH includes `/ucrt64/bin`
 - Install packages with `mingw-w64-ucrt-x86_64-` prefix
 
-**Linux:**
+**Linux**
 - Install both development headers and runtime libraries
-- For Wayland: May need additional Wayland support libraries
-- For older distributions: Use AppImage Vulkan SDK
+- For Wayland: May need additional libraries (`libwayland-dev`)
+- For older distros: Use AppImage Vulkan SDK
 
-**macOS:**
+**macOS**
 - Vulkan runs through MoltenVK translation layer
-- Some Vulkan features may be unsupported
-- Ensure VK_ICD_FILENAMES points to MoltenVK
+- Ensure `VK_ICD_FILENAMES` environment variable is set
+</details>
 
-### Getting Help
+## 📚 Learning from this Project
 
-1. Check the console output for detailed error messages
-2. Verify your system meets the minimum requirements
-3. Test with validation layers enabled (Debug build)
-4. Check GitHub Issues for similar problems
-5. Run `vulkaninfo` to verify Vulkan installation
+### 🎓 Educational Value
+This completed project serves as a comprehensive **learning resource** for graphics programming:
 
-### Performance Optimization
+- **Study the Implementation**: Explore modern Vulkan API usage patterns
+- **Understand Architecture**: See how to structure a multi-threaded graphics engine
+- **Learn Optimization**: Analyze GPU memory management and performance techniques
+- **Reference Material**: Use as a starting point for your own graphics projects
 
-**For better performance:**
-- Use Release build configuration
-- Update to latest graphics drivers
-- Close unnecessary background applications
-- On laptops: Use discrete GPU if available
-- Add Vulkan SDK bin directory to your PATH
+### � Free to Use & Extend
+- **Fork Freely**: Create your own version without restrictions (MIT License)
+- **Copy Code**: Take any parts you find useful for your projects
+- **Commercial Use**: No limitations - use in personal or commercial applications
+- **Educational**: Perfect for learning, teaching, or portfolio demonstration
 
-**"Vulkan not found"**
-- Install graphics drivers with Vulkan support
-- Verify GPU compatibility with `vulkaninfo` command
+### 🚀 Extension Ideas
+- **Advanced Rendering**: PBR materials, post-processing effects, global illumination
+- **VR Support**: OpenXR integration for virtual reality applications
+- **Asset Pipeline**: Model loading, texture streaming, material systems
+- **Editor Tools**: Scene editing, debugging tools, profiling integration
 
-**"GLFW not found"**
-- Install GLFW development libraries
-- On Windows, ensure GLFW is in a standard location or set CMAKE_PREFIX_PATH
+> **📖 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for detailed learning guidance and code exploration tips.**
 
-**Runtime crashes**
-- Enable Vulkan validation layers in debug builds
-- Check that shaders compiled successfully
-- Verify GPU has sufficient memory
+## 📋 Project Status
 
-### Getting Help
-- Check [Issues](https://github.com/antohaev100/Vulkan-Game/issues) for known problems
-- Create a new issue with system information and error logs
-- Include CMake configuration output and build logs
+This project is **complete** as an educational resource demonstrating:
 
-## Contributing
+**✅ Implemented Features**: Vulkan rendering engine, shadow mapping, multi-threading, cross-platform support  
+**🎓 Learning Objectives**: Modern graphics programming, GPU optimization, engine architecture  
+**🔒 Maintenance Status**: No ongoing development - available for study and extension
 
-Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+> **📊 See [`SCOPE.md`](SCOPE.md) for comprehensive technical documentation and implementation details.**
 
-## License
+## 📄 License
 
-This project is licensed under the terms specified in [LICENCE.md](LICENCE.md).
+This project is licensed under the **MIT License** - see [`LICENCE.md`](LICENCE.md) for details.
 
-Third-party dependencies have their own licenses - see [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) for details.
+### Third-Party Licenses
+Third-party dependencies have their own licenses. Complete license information and compliance details are available in [`THIRD_PARTY_LICENSES.md`](THIRD_PARTY_LICENSES.md).
 
-## Acknowledgments
+## 🙏 Acknowledgments
 
-- Vulkan community and documentation
-- STB libraries by Sean Barrett
-- GLFW development team
-- All contributors to the third-party libraries used
+- **Vulkan Community**: For comprehensive documentation and support
+- **Khronos Group**: For the Vulkan API specification and tools
+- **Library Authors**: Sean Barrett (STB), GLFW team, and all open-source contributors
+- **Graphics Programming Community**: For tutorials, examples, and shared knowledge
 
 ---
 
-**Note**: This is a learning project focused on low-level graphics programming. It prioritizes educational value and performance over ease of use.
+<div align="center">
+
+**🎮 Built with ❤️ for the graphics programming community**
+
+[![GitHub stars](https://img.shields.io/github/stars/antohaev100/Vulkan-Game?style=social)](https://github.com/antohaev100/Vulkan-Game)
+[![GitHub forks](https://img.shields.io/github/forks/antohaev100/Vulkan-Game?style=social)](https://github.com/antohaev100/Vulkan-Game/fork)
+
+*This is a completed educational project showcasing modern graphics programming.  
+Available for learning, study, and unrestricted use under MIT license.*
+
+</div>
