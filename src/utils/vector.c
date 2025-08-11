@@ -40,3 +40,11 @@ void initVector(vec *m, int elemSize, int capacity, int minCapacity) {
     m->c = capacity;
     m->minc = minCapacity;
 }
+
+void deleteVector(vec *m) {
+    free(m->array);
+    m->array = NULL;
+    m->n = 0;
+    m->c = 0;
+    m->minc = 0;
+}

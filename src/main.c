@@ -9,7 +9,8 @@ static void *physics_thread(void *arg);
 static void *audio_thread(void *arg);
 static void framebufferSizeCallback(GLFWwindow *window, int width, int height);
 static void barrier_wait();
-static void initBuffer(sharedBuffer *pBuffer);
+static sharedBuffer * initBuffer();
+static void deleteSharedBuffer(sharedBuffer *pBuffer);
 
 // file scope Synchronization variables
 static struct cthreads_mutex mutex;
@@ -29,8 +30,7 @@ int main() {
     timer_lib_initialize();
     printf("Timer initialized\n");
     // Create and initialize the application state
-    sharedBuffer *pBuffer = malloc(sizeof(sharedBuffer));
-    initBuffer(pBuffer);
+    sharedBuffer *pBuffer = initBuffer();
     printf("Buffer initialized\n");
 
     struct cthreads_thread renderThread, physicsThread, audioThread;
@@ -94,7 +94,7 @@ int main() {
     // Destroy synchronization variables
     cthreads_mutex_destroy(&mutex);
     cthreads_cond_destroy(&cond);
-    free(pBuffer);
+    deleteSharedBuffer(pBuffer);
     printf("Destroying Vulkan\n");
     deleteVulkan();
     printf("Destroying window\n");
@@ -104,7 +104,8 @@ int main() {
     return 0;
 }
 
-static void initBuffer(sharedBuffer *pBuffer){
+static sharedBuffer* initBuffer(){
+    sharedBuffer *pBuffer = malloc(sizeof(sharedBuffer));
     pBuffer->cameraPos[0]=0.0f;
     pBuffer->cameraPos[1]=0.0f;
     pBuffer->cameraPos[2]=0.25f;
@@ -148,6 +149,14 @@ static void initBuffer(sharedBuffer *pBuffer){
         .rotation = {0.0f, 0.0f, 0.0f}
     };
     vectorAdd(&pBuffer->ellipsoidCylinders, &pillar);
+    return pBuffer;
+}
+
+static void deleteSharedBuffer(sharedBuffer *pBuffer) {
+    deleteVector(&pBuffer->cuboids);
+    deleteVector(&pBuffer->ellipsoids);
+    deleteVector(&pBuffer->ellipsoidCylinders);
+    free(pBuffer);
 }
 
 static void barrier_wait() {

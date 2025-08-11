@@ -22,5 +22,5 @@ void vectorAdd(vec *m, void* newElem);
 void vectorRem(vec* m, int index);
 void vectorCheckCapacity(vec *m);
 void initVector(vec *m, int elemSize, int capacity, int minCapacity);
-
+void deleteVector(vec *m);
 #endif // UTILS_H
